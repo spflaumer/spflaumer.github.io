@@ -15,20 +15,22 @@
             <p>Loading repos</p>
         {:then repos}
             {#each repos.data as repo}
-                <div class="repo">
-                    <p>{repo.name}</p>
-                    {#await octo.request("GET /repos/{username}/{reponame}/stargazers", {
-                        username: repo.owner.login,
-                        reponame: repo.name,
-                    })}
-                        <p>Getting Stars</p>
-                    {:then stars}
-                        <div class="icon-info">
-                            <p><i class="nf nf-fa-star"></i> {stars.data.length}</p>
-                            <a href={repo.html_url}><p><i class="nf nf-md-github"></i> Open</p></a>
-                        </div>
-                    {/await}
-                </div>
+                {#if !repo.fork}
+                    <div class="repo">
+                        <p>{repo.name}</p>
+                        {#await octo.request("GET /repos/{username}/{reponame}/stargazers", {
+                            username: repo.owner.login,
+                            reponame: repo.name,
+                        })}
+                            <p>Getting Stars</p>
+                        {:then stars}
+                            <div class="icon-info">
+                                <p><i class="nf nf-fa-star"></i> {stars.data.length}</p>
+                                <a href={repo.html_url}><p><i class="nf nf-md-github"></i> Open</p></a>
+                            </div>
+                        {/await}
+                    </div>
+                {/if}
             {/each}
         {:catch err}
             <p>{err.message}</p>
